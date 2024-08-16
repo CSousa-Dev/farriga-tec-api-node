@@ -17,6 +17,7 @@
 
         // Display the server port
         var portEl = document.getElementById('server-port');
+        console.log(location);
         portEl.innerHTML = 'Connected on port: ' + (location.port || 'default (80 or 443)');
 
         ws.onmessage = function(event) {
