@@ -8,11 +8,16 @@
 <body>
     <h1>WebSocket Server Time</h1>
     <div id="server-time">Connecting to server...</div>
+    <div id="server-port"></div>
 
     <script>
         var HOST = location.origin.replace(/^http/, 'ws');
         var ws = new WebSocket(HOST);
         var el;
+
+        // Display the server port
+        var portEl = document.getElementById('server-port');
+        portEl.innerHTML = 'Connected on port: ' + (location.port || 'default (80 or 443)');
 
         ws.onmessage = function(event) {
             el = document.getElementById('server-time');
