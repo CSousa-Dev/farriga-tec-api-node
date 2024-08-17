@@ -3,28 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket Server Time</title>
+    <title>WebSocket Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #messages {
+            border: 1px solid #ddd;
+            padding: 10px;
+            height: 200px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+        }
+        #input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
 </head>
 <body>
-    <h1>WebSocket Server Time</h1>
-    <div id="server-time">Connecting to server...</div>
-    <div id="client-port"></div>
+    <h1>WebSocket Chat</h1>
+    <div id="messages">Connecting to server...</div>
+    <input id="input" type="text" placeholder="Type a message..." />
 
     <script>
-        var HOST = location.origin.replace(/^http/, 'ws');
-        var ws = new WebSocket(HOST);
-        var el, portEl;
+        // Construir a URL do WebSocket com base na origem da página
+        const HOST = location.origin.replace(/^http/, 'ws');
+        const ws = new WebSocket(HOST);
+        const messagesDiv = document.getElementById('messages');
+        const input = document.getElementById('input');
 
-        ws.onmessage = function(event) {
-            el = document.getElementById('server-time');
-            el.innerHTML = 'Server time: ' + event.data;
-
-            // Verifica se a mensagem recebida é sobre a porta do cliente
-            if (event.data.includes('You connected from port')) {
-                portEl = document.getElementById('client-port');
-                portEl.innerHTML = event.data;
-            }
+        // Quando a conexão WebSocket é aberta
+        ws.onopen = function() {
+            messagesDiv.innerHTML = 'Connected to WebSocket server';
         };
+
+        // Quando uma mensagem é recebida do servidor
+        ws.onmessage = function(event) {
+            const messageElement = document.createElement('div');
+
+            if (typeof event.data === 'string') {
+                // Se a mensagem for uma string
+                messageElement.textContent = 'Received: ' + event.data;
+            } else if (event.data instanceof Blob) {
+                // Se a mensagem for um Blob
+                const reader = new FileReader();
+                reader.onload = function() {
+                    const text = reader.result;
+                    messageElement.textContent = 'Received Blob: ' + text;
+                };
+                reader.readAsText(event.data);
+            } else {
+                messageElement.textContent = 'Received unknown type: ' + event.data;
+            }
+
+            messagesDiv.appendChild(messageElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Rolagem automática para a parte inferior
+        };
+
+        // Quando a conexão WebSocket é fechada
+        ws.onclose = function() {
+            messagesDiv.innerHTML = 'Disconnected from WebSocket server';
+        };
+
+        // Quando ocorre um erro na conexão WebSocket
+        ws.onerror = function(error) {
+            console.error('WebSocket Error:', error);
+            messagesDiv.innerHTML = 'Error connecting to WebSocket server';
+        };
+
+        // Enviar mensagem ao pressionar Enter no input
+        input.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                const message = input.value.trim();
+                if (message) {
+                    ws.send(message);
+                    const messageElement = document.createElement('div');
+                    messageElement.textContent = 'Sent: ' + message;
+                    messagesDiv.appendChild(messageElement);
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight; // Rolagem automática para a parte inferior
+                    input.value = ''; // Limpa o input após o envio
+                }
+                event.preventDefault(); // Evita a quebra de linha no input
+            }
+        });
     </script>
 </body>
 </html>

@@ -15,14 +15,31 @@ app.use((req, res) => {
 const server = (0, http_1.createServer)(app);
 const wss = new ws_1.Server({ server });
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
-wss.on('connection', (ws) => {
+const clients = new Set();
+wss.on('connection', (ws, req) => {
     console.log('Client connected');
+    // Adiciona a nova conexão à lista de clientes
+    clients.add(ws);
+    // Escuta mensagens dos clientes
+    ws.on('message', (message) => {
+        console.log('Message received:', message);
+        // Envia a mensagem para todos os clientes, exceto o que enviou a mensagem
+        clients.forEach(client => {
+            if (client !== ws && client.readyState === ws_1.WebSocket.OPEN) {
+                client.send(message);
+            }
+        });
+    });
+    const clientPort = req.socket.remotePort; // Pega a porta do cliente
+    console.log('Client connected on port:', clientPort);
+    // Envia a porta do cliente para ele mesmo
+    //   ws.send(`You connected from port: ${clientPort}`);
     ws.on('close', () => console.log('Client disconnected'));
 });
-setInterval(() => {
-    wss.clients.forEach((client) => {
-        if (client.readyState === ws_1.WebSocket.OPEN) {
-            client.send(new Date().toTimeString());
-        }
-    });
-}, 1000);
+// setInterval(() => {
+//   wss.clients.forEach((client: WebSocket) => {
+//     if (client.readyState === WebSocket.OPEN) {
+//       client.send(new Date().toTimeString());
+//     }
+//   });
+// }, 1000);
