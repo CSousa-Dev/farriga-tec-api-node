@@ -1,4 +1,4 @@
-import { Server as WSServer, WebSocket } from 'ws';
+import SocketAll, { Server as WSServer, WebSocket } from 'ws';
 import express, { Request, Response } from 'express';
 import { createServer } from 'http';
 
@@ -6,11 +6,6 @@ const INDEX = 'index.html';
 const PORT = process.env.PORT || 3000;
 
 const app = express();
-
-app.use((req: Request, res: Response) => {
-  res.sendFile(INDEX, { root: __dirname });
-});
-
 const server = createServer(app);
 
 const wss = new WSServer({ server });
@@ -26,13 +21,13 @@ wss.on('connection', (ws: WebSocket, req) => {
   clients.add(ws);
 
   // Escuta mensagens dos clientes
-  ws.on('message', (message: string) => {
+  ws.on('message', (message: SocketAll.MessageEvent) => {
     console.log('Message received:', message);
 
     // Envia a mensagem para todos os clientes, exceto o que enviou a mensagem
     clients.forEach(client => {
     if (client !== ws && client.readyState === WebSocket.OPEN) {
-            client.send(message);
+            client.send(message.toString());
         }});
     });
 
@@ -45,6 +40,24 @@ wss.on('connection', (ws: WebSocket, req) => {
   
   ws.on('close', () => console.log('Client disconnected'));
 });
+
+
+
+app.get('/clients', (req: Request, res: Response) => {
+    const clientList = Array.from(clients).map((ws, index) => ({
+        id: index + 1,
+        ip: (ws as any)._socket.remoteAddress,
+        port: (ws as any)._socket.remotePort,
+    }));
+
+    res.json(clientList);
+});
+
+app.get('/' ,(req: Request, res: Response) => {
+    res.sendFile(INDEX, { root: __dirname });
+});
+  
+
 
 // setInterval(() => {
 //   wss.clients.forEach((client: WebSocket) => {
