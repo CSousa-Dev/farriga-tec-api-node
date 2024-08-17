@@ -38,7 +38,10 @@ wss.on('connection', (ws: WebSocket, req) => {
   // Envia a porta do cliente para ele mesmo
 //   ws.send(`You connected from port: ${clientPort}`);
   
-  ws.on('close', () => console.log('Client disconnected'));
+    ws.on('close', () => {
+        console.log('Client disconnected');
+        clients.delete(ws);
+    })
 });
 
 
