@@ -2,15 +2,23 @@ import Measure from "./Measure";
 
 export default class Sensor implements SensorInterface {
     
-    constructor (
-        readonly type: 'umidity' | 'temperature' | 'soilMoisture' | 'rain',
-        readonly position: number,
-        private measure: Measure,
-        private threshold: number,
-        private isActive: boolean
-    ){}
+    readonly type: SensorType;
+    readonly position: number;
+    private measure: Measure | null;
+    private threshold: number;
+    private isActive: boolean;
 
-    currentMeasure(): Measure {
+    constructor (
+        sensorData: SensorData
+    ){
+        this.type = sensorData.type;
+        this.position = sensorData.position;
+        this.measure = sensorData.measure;
+        this.threshold = sensorData.threshold;
+        this.isActive = sensorData.isActive;
+    }
+
+    currentMeasure(): Measure | null {
         return this.measure;
     }
 
@@ -43,11 +51,21 @@ export default class Sensor implements SensorInterface {
     }
 }
 
+type SensorType = 'umidity' | 'temperature' | 'soilMoisture' | 'rain';
+
+type SensorData = {
+    type: SensorType,
+    position: number,
+    measure: Measure | null,
+    threshold: number,
+    isActive: boolean
+}
+
 interface SensorInterface {
-    readonly type: 'umidity' | 'temperature' | 'soilMoisture' | 'rain';
+    readonly type: SensorType;
     readonly position: number;
-    
-    currentMeasure(): Measure;
+
+    currentMeasure(): Measure | null;
     changeTreshold(treshold: number): void;
     changeMeasure(measure: Measure): void;
     currentTreshold(): number;

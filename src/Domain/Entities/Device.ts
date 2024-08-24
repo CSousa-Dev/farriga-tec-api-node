@@ -7,7 +7,7 @@ export default class Device {
     private alias: string;
     private isActive: boolean;
     private lastConnection: Date;
-    // private sensors: Sensor[];
+    private sensors: Sensor[];
 
     constructor (
         deviceData: DeviceDataInterface
@@ -17,7 +17,7 @@ export default class Device {
         this.alias = deviceData.alias;
         this.isActive = deviceData.isActive;
         this.lastConnection = deviceData.lastConnection;
-        // this.sensors = deviceData.sensors;
+        this.sensors = deviceData.sensors;
     }
 
     getMacAddress(): string {
@@ -40,22 +40,26 @@ export default class Device {
         return this.lastConnection;
     }
 
-    // getSensors(): Sensor[] {
-    //     return this.sensors;
-    // }
+    getSensors(): Sensor[] {
+        return this.sensors;
+    }
 
-    // addNewMeasure(sensorType: 'umidity' | 'temperature' | 'soilMoisture' | 'rain', sensorPosition: number, measure: Measure): void {
+    addNewMeasure(
+        sensorType: 'umidity' | 'temperature' | 'soilMoisture' | 'rain', 
+        sensorPosition: number, 
+        measure: Measure
+    ): void {
 
-    //     const sensor = this.sensors.find(sensor => sensor.type === sensorType && sensor.position === sensorPosition);
+        const sensor = this.sensors.find(sensor => sensor.type === sensorType && sensor.position === sensorPosition);
 
-    //     if(sensor){
-    //         sensor.changeMeasure(measure);
-    //     }
+        if(sensor){
+            sensor.changeMeasure(measure);
+        }
 
-    //     if(!sensor){
-    //         throw new Error('Sensor not found');
-    //     }
-    // }
+        if(!sensor){
+            throw new Error('Sensor not found');
+        }
+    }
 }
 
 interface DeviceDataInterface {

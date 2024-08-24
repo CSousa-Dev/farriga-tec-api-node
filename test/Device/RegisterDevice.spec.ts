@@ -6,6 +6,8 @@ import InMemoryDeviceRepository from '../../src/Repositories/Device/InMemoryDevi
 import MockEventEmitter from '../Mocks/MockEventEmitter';
 import MockEventKeyCreator from '../Mocks/MockEventKeyCreator';
 import CustomEventEmitter from '../../src/Application/CustomEventEmitter';
+import Sensors from '../Mocks/MockSensors';
+import Sensor from '../../src/Domain/Entities/Sensor/Sensor';
 
 
 describe('DeviceRegistrationService', () => {
@@ -14,12 +16,14 @@ describe('DeviceRegistrationService', () => {
     let eventKeyCreator: EventKeyCreatorInterface;
     let deviceRegistrationService: DeviceRegistrationService;
     let device: Device;
+    let mockSensors: Sensor[];
 
     beforeEach(() => {
         deviceRepository = new InMemoryDeviceRepository();
         eventEmitter = new MockEventEmitter();
         eventKeyCreator = new MockEventKeyCreator();
         deviceRegistrationService = new DeviceRegistrationService(deviceRepository, eventEmitter, eventKeyCreator);
+        mockSensors = Sensors;
 
         device = new Device({
             macAddress: '00:11:22:33:44:55',
@@ -29,7 +33,7 @@ describe('DeviceRegistrationService', () => {
             lastConnection: new Date(),
             description: 'Test Device Description',
             location: 'Test Location',
-            sensors: []  // Supondo que seja opcional
+            sensors: mockSensors
         });
     });
 
