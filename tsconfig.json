@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-   
     "target": "ES6",                              
     "module": "commonjs",                                
     "esModuleInterop": true,                             
@@ -9,8 +8,12 @@
     "skipLibCheck": true ,
     "outDir": "./dist",
     "rootDir": "./src",                   
-    "types": ["jest"],
+    "types": ["jest", "reflect-metadata"],
+    "lib": ["es6"],
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
-  "include": ["src/**/*","tests/**/*.ts"],
+  "include": ["src/**/*","tests/**/*.ts", "src/Domain/Services/.ts"],
   "exclude": ["node_modules"]
 }
