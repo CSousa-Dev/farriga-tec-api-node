@@ -1,7 +1,7 @@
 import { repositoryTypes } from "../Types/repositoryTypes";
 import DomainRepositoryProviderInterface from "../Domain/Repositories/DomainRepositoryProviderInterface";
 import DeviceRepositoryInterface from "../Domain/Repositories/Device/DeviceRepositoryInterface";
-import InMemoryDeviceRepository from "../Infra/Repositories/Device/InMemoryDeviceRepository";
+import InMemoryDeviceRepository from "../Infra/Repositories/InMemory/Device/InMemoryDeviceRepository";
 import sharedContainer from "../Config/DI/sharedContainer";
 import UserRepositoryInterface from "../Domain/Repositories/Account/UserRepositoryInterface";
 

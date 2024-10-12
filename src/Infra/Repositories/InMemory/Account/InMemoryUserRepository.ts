@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { injectable } from "inversify";
-import User from "../../../Domain/Entities/Account/User";
-import UserRepositoryInterface from "../../../Domain/Repositories/Account/UserRepositoryInterface";
+import User from "../../../../Domain/Entities/Account/User";
+import UserRepositoryInterface from "../../../../Domain/Repositories/Account/UserRepositoryInterface";
 
 @injectable()
 export default class InMemoryUserRepository implements UserRepositoryInterface {

@@ -7,13 +7,13 @@
     "strict": true,                                     
     "skipLibCheck": true ,
     "outDir": "./dist",
-    "rootDir": "./src",                   
+    "rootDir": "./",                   
     "types": ["jest", "reflect-metadata"],
     "lib": ["es6"],
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["src/**/*","tests/**/*.ts", "src/Domain/Services/.ts"],
+  "include": ["src/**/*","tests/**/*.ts", "src/Domain/Services/.ts", "test/Mock/ActionPermissionsMap.ts", "test/Mock/ActionsMap.ts", "test/Mock/DevicesMap.ts", "test/Mock/SensorsMap.ts", "test/Mock/SensorsModelMap.ts"],
   "exclude": ["node_modules"]
 }

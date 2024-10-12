@@ -4,6 +4,7 @@ import RegisterService from "../Domain/Service/Device/RegisterDeviceService";
 import sharedContainer from "../Config/DI/sharedContainer";
 import RemoveDeviceService from "../Domain/Service/Device/RemoveDeviceService";
 import RegisterUserService from "../Domain/Service/Account/RegisterUserService";
+import ActionPermissionService from "../Domain/Service/Device/ActionPermissionService";
 
 export default class DomainServiceProvider implements DomainServiceProviderInterface {
 
@@ -15,6 +16,10 @@ export default class DomainServiceProvider implements DomainServiceProviderInter
     // ---------------------------------------------------
     
     /** Device Services */
+    actionPermissionService(): ActionPermissionService {
+        return sharedContainer.get<ActionPermissionService>(domainServiceTypes.ActionPermissionService);
+    }
+
     registerDeviceService(): RegisterService {
         return sharedContainer.get<RegisterService>(domainServiceTypes.RegisterDeviceService);
     }

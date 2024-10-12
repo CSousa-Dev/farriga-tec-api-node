@@ -1,9 +1,9 @@
 import "reflect-metadata";
 import { ContainerModule } from "inversify";
 import { repositoryTypes } from "../../Types/repositoryTypes";
-import InMemoryDeviceRepository from "../../Infra/Repositories/Device/InMemoryDeviceRepository";
+import InMemoryDeviceRepository from "../../Infra/Repositories/InMemory/Device/InMemoryDeviceRepository";
 import sharedContainer from "./sharedContainer";
-import InMemoryUserRepository from "../../Infra/Repositories/Account/InMemoryUserRepository";
+import InMemoryUserRepository from "../../Infra/Repositories/InMemory/Account/InMemoryUserRepository";
 
 const repositoryModule = new ContainerModule((bind) => {
     // Account Repositories
