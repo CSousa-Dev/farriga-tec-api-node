@@ -3,14 +3,24 @@ import { PermissionsType } from "./UserPermission";
 import DeviceModel from "./DeviceModel";
 import ActionPermission from "./ActionPermission";
 import Irrigator from "./Irrigator/Irrigator";
+import Connection from "./Connection";
 
 type deviceData = {
     deviceModel: DeviceModel,
     macAddress: string,
     name: string,
+    lastConnection?: Connection,
     sensors?: Sensor[] | null
     irrigators?: Irrigator[] | null
     actionPermissions?: ActionPermission[]
+}
+
+type actionTarget = "device" | "sensor" | "irrigator";
+
+type listAllowedUsersToListenActionData = {
+    action: string,
+    target: actionTarget,
+    position?: number
 }
 
 type actionPermissionQuestion = {
@@ -18,13 +28,14 @@ type actionPermissionQuestion = {
     action: string,
     userId: string,
     permission: PermissionsType,
-    type: string
+    type: actionTarget
 }
 
 export default class Device {
     public  readonly macAddress: string;
     public  readonly deviceModel: DeviceModel;
     public  readonly actionPermissions: Map<string, ActionPermission> = new Map();
+    private lastConnection: Connection | null = null;  
     private sensors: Sensor[] = [];
     private irrigators: Irrigator[] = [];
 
@@ -33,6 +44,7 @@ export default class Device {
         this.deviceModel = deviceData.deviceModel;
         this.sensors = deviceData.sensors || [];
         this.irrigators = deviceData.irrigators || [];
+        this.lastConnection = deviceData.lastConnection || null;
 
         if(deviceData.actionPermissions){
             deviceData.actionPermissions.forEach(actionPermission => {
@@ -68,6 +80,36 @@ export default class Device {
         return false;
     }
 
+    public listAllowedUsersToListenAction(listAllowedUsersToListenActionData: listAllowedUsersToListenActionData): string[] {
+        if(listAllowedUsersToListenActionData.target === "sensor") return this.listAllowedUsersToListenSensorAction(listAllowedUsersToListenActionData.action, listAllowedUsersToListenActionData.position);
+
+        if(listAllowedUsersToListenActionData.target === "device") return this.listAllowedUsersToListenDeviceAction(listAllowedUsersToListenActionData.action);
+
+        if(listAllowedUsersToListenActionData.target === "irrigator") return this.listAllowedUsersToListenIrrigatorAction(listAllowedUsersToListenActionData.action, listAllowedUsersToListenActionData.position);
+
+        return [];
+    }
+
+    private listAllowedUsersToListenSensorAction(action: string, position?: number): string[] {
+        if(position === undefined) return [];
+
+        const sensor = this.getSensorByPosition(position);
+        return sensor ? sensor.listAllowedUsersToListenAction(action) : [];
+    }
+
+    private listAllowedUsersToListenDeviceAction(action: string): string[] {
+        const actionPermission = this.actionPermissions.get(action);
+        return actionPermission ? actionPermission.permissions.map(permission => permission.userId) : [];
+    }
+
+    private listAllowedUsersToListenIrrigatorAction(action: string, position?: number): string[] {
+        if(position === undefined) return [];
+
+        const irrigator = this.irrigators.find(irrigator => irrigator.getPosition() === position);
+        return irrigator ? irrigator.listAllowedUsersToListenAction(action) : [];
+    }
+
+
     private canPerformSensorAction(action: string, userId: string, permission: PermissionsType, position?: number): boolean {
         if(position === undefined) return false;
 
@@ -86,6 +128,18 @@ export default class Device {
         const irrigator = this.irrigators.find(irrigator => irrigator.getPosition() === position);
 
         return irrigator ? irrigator.canPerformAction(action, userId, permission) : false;
+    }
+
+    public startConnection(): void {
+
+        if(this.lastConnection == null){
+            this.lastConnection = new Connection({ isConnected: true, connectedAt: new Date()}); 
+            return;
+        }
+
+        if(this.lastConnection?.getDisconnectedAt() === null) return;
+
+        this.lastConnection = new Connection({ isConnected: true, connectedAt: new Date(), disconnectedAt: new Date() }); 
     }
 }
 

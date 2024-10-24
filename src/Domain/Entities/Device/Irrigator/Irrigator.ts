@@ -35,4 +35,9 @@ export default class Irrigator {
         const actionPermission = this.actionPermissions.find(actionPermission => actionPermission.action.name === action);
         return actionPermission ? actionPermission.thisUserHasPermissionTo(userId, permission) : false;
     }
+
+    public listAllowedUsersToListenAction(action: string): string[] {
+        const actionPermission = this.actionPermissions.find(actionPermission => actionPermission.action.name === action);
+        return actionPermission ? actionPermission.getUsersAllowedsTo('listen') : [];
+    }
 }

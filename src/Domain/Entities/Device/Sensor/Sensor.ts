@@ -10,7 +10,7 @@ type sensorData = {
 
 export default class Sensor {
     private readonly position: number;
-    private readonly model: SensorModel
+    private readonly model: SensorModel;
     private actionPermissions: Map<string, ActionPermission> = new Map();
     
     constructor(sensorData: sensorData){
@@ -41,5 +41,10 @@ export default class Sensor {
     public canPerformAction(action: string, userId: string, permission: PermissionsType): boolean {
         const actionPermission = this.actionPermissions.get(action);
         return actionPermission ? actionPermission.thisUserHasPermissionTo(userId, permission) : false;
+    }
+
+    public listAllowedUsersToListenAction(action: string): string[] {
+        const actionPermission = this.actionPermissions.get(action);
+        return actionPermission ? actionPermission.getUsersAllowedsTo('listen') : [];
     }
 }

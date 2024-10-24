@@ -4,6 +4,7 @@ import UserAlreadyHasPasswordError from "../../Errors/Account/UserAlreadyHasPass
 import PasswordHasherInterface from "./PasswordHasherInterface";
 
 type UserData = {
+    id?: string,
     name: string,
     email: string,
     hashedPassword?: string
@@ -11,12 +12,14 @@ type UserData = {
 }
 
 export default class User {
+    public readonly id: string | undefined;
     public readonly name: string;
     public readonly email: string;
     private hashedPassword: string | undefined;
     private isLogged: boolean | undefined;
 
     constructor(userData: UserData){ 
+        this.id = userData.id;
         this.name = userData.name;
         this.email = userData.email;
         this.hashedPassword = userData.hashedPassword;

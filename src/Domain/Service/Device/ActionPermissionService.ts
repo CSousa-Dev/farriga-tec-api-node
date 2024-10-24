@@ -11,7 +11,7 @@ export type actionPermissionCheckPayload = {
     userId: string;
     actionType: 'device' | 'sensor' | 'irrigator';
     position?: number;
-    permission: PermissionsType
+    permission: PermissionsType;
 }
 
 @injectable()

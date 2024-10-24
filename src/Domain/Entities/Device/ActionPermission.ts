@@ -20,4 +20,10 @@ export default class ActionPermission {
         const userPermission = this.permissions.find(permission => permission.userId == userId);
         return userPermission ? userPermission.hasPermissionTo(permission) : false;
     }
+
+    public getUsersAllowedsTo(permission : PermissionsType): string[] {
+        return this.permissions
+            .filter(userPermission => userPermission.hasPermissionTo(permission))
+            .map(userPermission => userPermission.userId);
+    }
 }

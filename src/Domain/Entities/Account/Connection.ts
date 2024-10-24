@@ -1,5 +1,4 @@
 type connectionData = {
-    isConnected: boolean,
     connectedAt: Date
     disconnectedAt?: Date
 }
